@@ -19,7 +19,7 @@ INSTALLED_APPS = (
     'roll_engine',
 
     # tars apps
-    'tars.api',
+    # 'tars.api',
     'tars.application',
     'tars.deployment',
     'tars.engine',
@@ -73,7 +73,7 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.FormParser',
     ),
     'DEFAULT_RENDERER_CLASSES': (
-        'tars.api.utils.TarsJSONRenderer',
+        # 'tars.api.utils.TarsJSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
         'rest_framework_jsonp.renderers.JSONPRenderer',
     ),
