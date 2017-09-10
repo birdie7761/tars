@@ -114,6 +114,7 @@ Class
           break;
         case 'FAILURE':
         case 'REVOKED':
+          break;
         default:
           color = "#e51c23";
           break;
@@ -150,6 +151,7 @@ Class
           break;
         case 'FAILURE':
         case 'REVOKED':
+          break;
         default:
           color = "#e51c23";
           dash = "3 0";

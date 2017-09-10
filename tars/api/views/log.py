@@ -31,15 +31,15 @@ class LogQuerySet(list):
                   'search', 'log_module', 'log_level']
 
         page, page_size = get_paginate_params(request)
-        raw_dict = {param: request.QUERY_PARAMS.get(param)
-                    for param in params if request.QUERY_PARAMS.get(param)}
+        raw_dict = {param: request.query_params.get(param)
+                    for param in params if request.query_params.get(param)}
 
-        self.sort_by = request.QUERY_PARAMS.get('sort', 'log_timestamp')
-        self.sort_order = request.QUERY_PARAMS.get('sort_order', 'desc')
+        self.sort_by = request.query_params.get('sort', 'log_timestamp')
+        self.sort_order = request.query_params.get('sort_order', 'desc')
 
-        timestamp = request.QUERY_PARAMS.get(
+        timestamp = request.query_params.get(
             'timestamp', datetime.now().isoformat()[:-3] + 'Z')
-        direction = request.QUERY_PARAMS.get('direction', 'backward')
+        direction = request.query_params.get('direction', 'backward')
 
         query_dict = {}
         try:

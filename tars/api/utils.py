@@ -49,8 +49,8 @@ def get_paginate_params(request):
     paginate_by_param = settings.REST_FRAMEWORK.get('PAGINATE_BY_PARAM',
                                                     'page_size')
     default_page_size = settings.REST_FRAMEWORK.get('PAGINATE_BY')
-    page_size = request.QUERY_PARAMS.get(paginate_by_param) or default_page_size
-    page = request.QUERY_PARAMS.get('page', 1)
+    page_size = request.query_params.get(paginate_by_param) or default_page_size
+    page = request.query_params.get('page', 1)
     return [int(page), int(page_size)]
 
 

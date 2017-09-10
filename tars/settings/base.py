@@ -19,7 +19,7 @@ INSTALLED_APPS = (
     'roll_engine',
 
     # tars apps
-    # 'tars.api',
+    'tars.api',
     'tars.application',
     'tars.deployment',
     'tars.engine',
@@ -73,16 +73,15 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.FormParser',
     ),
     'DEFAULT_RENDERER_CLASSES': (
-        # 'tars.api.utils.TarsJSONRenderer',
+        'tars.api.utils.TarsJSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
         'rest_framework_jsonp.renderers.JSONPRenderer',
     ),
     'DEFAULT_FILTER_BACKENDS': (
         'rest_framework.filters.DjangoFilterBackend',
     ),
-    'PAGINATE_BY': 20,
-    'PAGINATE_BY_PARAM': 'page_size',
-    'MAX_PAGINATE_BY': 100,
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 2,
 }
 
 # Celery
