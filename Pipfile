@@ -1,0 +1,27 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+django = "==1.8"
+celery = "==3.1.25"
+django-constance = "==1.2"
+django-fsm = "*"
+djangorestframework = "==3.0.4"
+raven = "*"
+mysql-python = "*"
+pyyaml = "*"
+elasticsearch = "*"
+djangorestframework-camel-case = "*"
+requests = "==2.6.0"
+decisiontable = "*"
+ansible = "==1.9.6"
+djangorestframework-jsonp = "*"
+django-filter = "==0.11.0"
+redis = "*"
+
+[requires]
+python_version = "2.7"
