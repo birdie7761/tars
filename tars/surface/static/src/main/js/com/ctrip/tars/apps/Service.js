@@ -3,7 +3,7 @@ $import("com.ctrip.tars.base.SegmentService");
 Class.forName({
   name: "class com.ctrip.tars.apps.Service extends com.ctrip.tars.base.SegmentService",
   Service: function() {
-    this.data.data.protectedAttributes.add("groups")
+    this.data.data.protectedAttributes.add("groups");
     this.data.data.setProtectedAttributesParser(function(newValue, oldValue, attr) {
       if (attr === 'groups') {
         var fridge = new com.ctrip.tars.util.Fridge();

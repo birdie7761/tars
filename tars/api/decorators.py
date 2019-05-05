@@ -16,7 +16,7 @@ def fort_batch(param='fort_batch'):
             fort_batch_id = None
             if isinstance(args[0], TarsFortDeployment):
                 fort_batch_id = args[0].get_fort_batch().id
-            is_fort_batch = str2bool(request.QUERY_PARAMS.get(param))
+            is_fort_batch = str2bool(request.query_params.get(param))
 
             if is_fort_batch is not None:
                 if is_fort_batch:
@@ -34,7 +34,7 @@ def running(param='running'):
         def func_wrapper(*args, **kwargs):
             queryset = func(*args, **kwargs)
             request = args[1]
-            is_running = str2bool(request.QUERY_PARAMS.get(param))
+            is_running = str2bool(request.query_params.get(param))
             if is_running is not None:
                 if is_running:
                     return queryset.exclude(status__in=HALTED)
@@ -51,7 +51,7 @@ def last_success_deployment(param='last_success'):
         def func_wrapper(*args, **kwargs):
             queryset = func(*args, **kwargs)
             request = args[1]
-            last_success = str2bool(request.QUERY_PARAMS.get(param))
+            last_success = str2bool(request.query_params.get(param))
             if last_success:
                 queryset = queryset.order_by(
                     '-created_at').filter(status=SUCCESS)[:1]
@@ -66,7 +66,7 @@ def status(param='status'):
         def func_wrapper(*args, **kwargs):
             queryset = func(*args, **kwargs)
             request = args[1]
-            query_param_status = request.QUERY_PARAMS.get(param)
+            query_param_status = request.query_params.get(param)
             if query_param_status is not None:
                 statuses = query_param_status.split(',')
                 queryset = queryset.filter(status__in=statuses)
@@ -81,7 +81,7 @@ def deployment(param='deployment'):
         def func_wrapper(*args, **kwargs):
             queryset = func(*args, **kwargs)
             request = args[1]
-            deployment_id = request.QUERY_PARAMS.get(param)
+            deployment_id = request.query_params.get(param)
             if deployment_id is not None:
                 queryset = queryset.filter(
                     pk=TarsDeployment.objects.get(pk=deployment_id).package_id)
@@ -96,7 +96,7 @@ def last_success_package(param='last_success'):
         def func_wrapper(*args, **kwargs):
             queryset = func(*args, **kwargs)
             request = args[1]
-            last_success = str2bool(request.QUERY_PARAMS.get(param))
+            last_success = str2bool(request.query_params.get(param))
             if last_success:
                 last_success_ids = queryset.filter(status=SUCCESS).annotate(max_pk=Max('pk'))
                 queryset = queryset.filter(pk__in=last_success_ids.values('max_pk'))
@@ -111,7 +111,7 @@ def created_from(param='created_from'):
         def func_wrapper(*args, **kwargs):
             queryset = func(*args, **kwargs)
             request = args[1]
-            query_param_date = request.QUERY_PARAMS.get(param)
+            query_param_date = request.query_params.get(param)
             if query_param_date is not None:
                 queryset = queryset.filter(created_at__gte=query_param_date)
             return queryset
@@ -125,7 +125,7 @@ def created_before(param='created_before'):
         def func_wrapper(*args, **kwargs):
             queryset = func(*args, **kwargs)
             request = args[1]
-            query_param_date = request.QUERY_PARAMS.get(param)
+            query_param_date = request.query_params.get(param)
             if query_param_date is not None:
                 queryset = queryset.filter(created_at__lt=query_param_date)
             return queryset
@@ -139,7 +139,7 @@ def ids(param, field):
         def func_wrapper(*args, **kwargs):
             queryset = func(*args, **kwargs)
             request = args[1]
-            query_param_id = request.QUERY_PARAMS.get(param)
+            query_param_id = request.query_params.get(param)
             if query_param_id is not None:
                 ids = query_param_id.split(',')
                 kwargs = {'{0}__in'.format(field): ids}
@@ -154,7 +154,7 @@ def app_status(func):
     def func_wrapper(*args, **kwargs):
         queryset = func(*args, **kwargs)
         request = args[1]
-        query_param_status = request.QUERY_PARAMS.get('status')
+        query_param_status = request.query_params.get('status')
         if query_param_status is not None:
             from django.db.models import F
             from tars.deployment.models import Deployment

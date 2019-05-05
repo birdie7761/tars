@@ -24,7 +24,7 @@ class ServerViewSet(viewsets.ModelViewSet):
     def ping(self, request, pk=None, format=None):
         server = self.get_object()
         salt_profile = server.group.application.salt_client
-        timeout = request.QUERY_PARAMS.get('timeout', 32)
+        timeout = request.query_params.get('timeout', 32)
 
         try:
             task = TarsTasks.ping.s(TarsTasks, salt_profile, server.hostname)
@@ -163,8 +163,8 @@ class GroupViewSet(viewsets.ModelViewSet):
                 type: array
         """
         group = self.get_object()
-        batch_pattern = request.QUERY_PARAMS.get('batch_pattern')
-        flavor = request.QUERY_PARAMS.get('flavor')
+        batch_pattern = request.query_params.get('batch_pattern')
+        flavor = request.query_params.get('flavor')
 
         try:
             if batch_pattern is None:
@@ -221,7 +221,7 @@ class GroupViewSet(viewsets.ModelViewSet):
 
         salt_profile = group.application.salt_client
         servers = group.servers.all().values_list('hostname', flat=True)
-        timeout = request.QUERY_PARAMS.get('timeout', 32)
+        timeout = request.query_params.get('timeout', 32)
 
         try:
             task = TarsTasks.ping.s(TarsTasks, salt_profile, ','.join(servers))

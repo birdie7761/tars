@@ -7,13 +7,14 @@ from tars.api.utils import str2bool
 from tars.application.models import Application
 from tars.server.models import JoinedGroup
 from tars.exceptions import SyncError
-from .base import (PaginatedSerializerMixin, DynamicFieldsModelSerializer,
-                   PaginatedListSerializer)
+# from .base import (PaginationMixin, DynamicFieldsModelSerializer,
+#                    PaginatedListSerializer)
+from .base import (PaginationMixin, DynamicFieldsModelSerializer)
 from .server import GroupSerializer
 
 
-class ApplicationListSerializer(PaginatedListSerializer):
-
+# class ApplicationListSerializer(PaginatedListSerializer):
+class ApplicationListSerializer(serializers.ListSerializer):
     def __init__(self, *args, **kwargs):
         self._is_preview = False
         return super(ApplicationListSerializer, self).__init__(*args, **kwargs)
@@ -71,8 +72,7 @@ class ApplicationListSerializer(PaginatedListSerializer):
             return apps
 
 
-class ApplicationSerializer(PaginatedSerializerMixin,
-                            DynamicFieldsModelSerializer):
+class ApplicationSerializer(DynamicFieldsModelSerializer):
     groups = GroupSerializer(read_only=True, many=True,
                              fields=('id', 'name', 'forts', 'group_id',
                                      'health_check_url', 'last_success_package',
@@ -82,6 +82,7 @@ class ApplicationSerializer(PaginatedSerializerMixin,
 
     class Meta:
         model = Application
+        fields = '__all__'
         ignored_fields = ('statuses', 'environment')
         list_serializer_class = ApplicationListSerializer
 
@@ -140,6 +141,7 @@ class ApplicationSummarySerializer(ApplicationSerializer):
 
     class Meta:
         model = Application
+        fields = '__all__'
 
 
 class ApplicationPreviewSerializer(ApplicationSummarySerializer):

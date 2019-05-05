@@ -86,15 +86,21 @@ class ApplicationViewSet(viewsets.ModelViewSet):
             return self.filter_queryset(self.get_queryset())
 
         queryset = get_queryset(self, request)
-        if request.QUERY_PARAMS.get('app_id') is not None:
-            serializer = self.get_serializer(
-                queryset, many=True, context={'request': request})
-            kwargs = {'ignored_fields': tuple()}
-        else:
-            serializer = serializers.ApplicationSimpleSerializer(
-                queryset, many=True, context={'request': request})
-            kwargs = {}
-        return Response(serializer.get_paginated_data(**kwargs))
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            if request.query_params.get('app_id') is not None:
+                serializer = self.get_serializer(
+                    page, many=True, context={'request': request})
+                kwargs = {'ignored_fields': tuple()}
+            else:
+                serializer = serializers.ApplicationSimpleSerializer(
+                    page, many=True, context={'request': request})
+                kwargs = {}
+            return Response(serializer.data)
+            pass
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
 
     @detail_route(methods=['get'])
     def packages(self, request, pk=None, format=None):
@@ -192,7 +198,7 @@ class ApplicationViewSet(viewsets.ModelViewSet):
         from tars.server.models import Server
 
         app = self.get_object()
-        deployment_id = request.QUERY_PARAMS.get('deployment')
+        deployment_id = request.query_params.get('deployment')
         tgt_list = []
 
         if deployment_id is not None:
@@ -279,8 +285,8 @@ class ApplicationViewSet(viewsets.ModelViewSet):
             return deploy_qs.order_by('-id')
 
         app = self.get_object()
-        group_id = request.QUERY_PARAMS.get('group_id')
-        queryset = get_queryset(self, request, request.QUERY_PARAMS.get('group'))
+        group_id = request.query_params.get('group_id')
+        queryset = get_queryset(self, request, request.query_params.get('group'))
 
 
         rerollable_ids = app.rerollable_deployment_ids(group_id=group_id)
@@ -298,7 +304,7 @@ class ApplicationViewSet(viewsets.ModelViewSet):
         app = self.get_object()
         salt_profile = app.salt_client
         servers = set(app.servers().values_list('hostname', flat=True))
-        timeout = request.QUERY_PARAMS.get('timeout', 32)
+        timeout = request.query_params.get('timeout', 32)
 
         try:
             task = TarsTasks.ping.s(TarsTasks, salt_profile, ','.join(servers))
@@ -337,9 +343,9 @@ class ApplicationViewSet(viewsets.ModelViewSet):
                 TarsDeployment.objects.filter(status__exact='SUCCESS'))
 
         # query today's onboard application as defalut action
-        if (request.QUERY_PARAMS.get('from') is None
-                and request.QUERY_PARAMS.get('to') is None):
-            query_dict = request.QUERY_PARAMS.copy()
+        if (request.query_params.get('from') is None
+                and request.query_params.get('to') is None):
+            query_dict = request.query_params.copy()
             query_dict['from'] = date.today().isoformat()
             request._request.GET = query_dict
 
@@ -390,9 +396,9 @@ class ApplicationViewSet(viewsets.ModelViewSet):
         def get_queryset(self, request):
             return TarsDeployment.objects.all()
 
-        query_dict = request.QUERY_PARAMS.copy()
+        query_dict = request.query_params.copy()
         # query active application in today
-        if request.QUERY_PARAMS.get('from') is None:
+        if request.query_params.get('from') is None:
             query_dict['from'] = date.today().isoformat()
 
         apps = Application.objects.filter(
@@ -432,9 +438,9 @@ class ApplicationViewSet(viewsets.ModelViewSet):
         def get_queryset(self, request):
             return TarsDeployment.objects.all()
 
-        query_dict = request.QUERY_PARAMS.copy()
+        query_dict = request.query_params.copy()
         # query non active application in 3 month
-        if request.QUERY_PARAMS.get('from') is None:
+        if request.query_params.get('from') is None:
             query_dict['from'] = fade_back_date(date.today(), 3).isoformat()
         apps = Application.objects.filter(
             created_at__lt=query_dict['from']).values_list('id', flat=True)
@@ -482,7 +488,7 @@ class PackageViewSet(viewsets.ModelViewSet):
         queryset = get_queryset(self, request)
         serializer = self.get_serializer(queryset, many=True,
                                          context={'request': request})
-        if request.QUERY_PARAMS.get('package') is not None:
+        if request.query_params.get('package') is not None:
             kwargs = {'ignored_fields': tuple()}
         else:
             kwargs = {}

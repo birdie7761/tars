@@ -985,6 +985,7 @@ ContentFlow.prototype = {
         break;
       case "none":
       case "transparent":
+        break;
       default:
         this._reflectionColor = "transparent";
         this._reflectionColorRGB = {

@@ -66,6 +66,7 @@ tarsPortal.controller("com.ctrip.tars.root.Controller", ['$scope', '$rootScope',
       case "skin-tiffany":
       case "local":
       case "default":
+        break;
       default:
         barColor = "#085D5E";
         trackColor = "#0C9597";

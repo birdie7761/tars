@@ -54,6 +54,7 @@ Class.forName({
         this.data.data.insert(results);
         break;
       case com.ctrip.tars.base.PaginationService.APPEND:
+        break;
       default:
         this.data.data.append(results);
         break;

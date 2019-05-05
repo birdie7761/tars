@@ -4,7 +4,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
 
 from rest_framework import serializers
-from rest_framework.pagination import PaginationSerializer
+# from rest_framework.pagination import PaginationSerializer
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.serializers import ValidationError
 
 from tars.api.utils import get_paginate_params
@@ -54,9 +55,10 @@ class DynamicFieldsModelSerializer(serializers.ModelSerializer):
         fields = kwargs.pop('fields', None)
         ignored_fields = kwargs.pop('ignored_fields',
                                     getattr(self.Meta, 'ignored_fields', []))
+
+        super(DynamicFieldsModelSerializer, self).__init__(*args, **kwargs)
         self.fields.pop('DataChange_LastTime', None)
         self.fields.pop('is_deleted', None)
-        super(DynamicFieldsModelSerializer, self).__init__(*args, **kwargs)
 
         if fields is not None:
             allowed = set(fields)
@@ -68,6 +70,7 @@ class DynamicFieldsModelSerializer(serializers.ModelSerializer):
                 self.fields.pop(field, None)
 
 
+'''
 class PaginatedListSerializer(serializers.ListSerializer):
 
     def get_page(self):
@@ -90,6 +93,7 @@ class PaginatedListSerializer(serializers.ListSerializer):
 
             serializer = pagination_serializer_class(page, context=self.context)
             return serializer.data
+
 
 
 class PaginatedSerializerMixin(object):
@@ -134,10 +138,18 @@ class PaginatedSerializerMixin(object):
                                         'list_serializer_class',
                                         PaginatedListSerializer)
         return list_serializer_class(*args, **kwargs)
+'''
 
 
-class LogSerializer(PaginatedSerializerMixin, serializers.Serializer):
+class PaginationMixin(object):
+    pagination_class = PageNumberPagination
 
+
+# class LogSerializer(PaginatedSerializerMixin, serializers.Serializer):
+class LogSerializer(serializers.Serializer):
+    pagination_class = PageNumberPagination
+'''
     @classmethod
     def get_pagination_serializer_class(cls):
         return PaginationSerializer
+'''

@@ -1,7 +1,7 @@
 from django.db import transaction
 from rest_framework import serializers
 
-from .base import IPv4AddressField, PkModelField, PaginatedSerializerMixin, \
+from .base import IPv4AddressField, PkModelField, PaginationMixin, \
                   DynamicFieldsModelSerializer
 from tars.api.utils import str2int
 from tars.server.models import Server, Group, JoinedGroup
@@ -9,7 +9,7 @@ from tars.deployment.models import TarsDeploymentTarget
 from tars.application.models import Package
 
 
-class PackageSerializer(PaginatedSerializerMixin, DynamicFieldsModelSerializer):
+class PackageSerializer(PaginationMixin, DynamicFieldsModelSerializer):
 
     latest_deployment = serializers.SerializerMethodField()
 
@@ -27,11 +27,12 @@ class PackageSerializer(PaginatedSerializerMixin, DynamicFieldsModelSerializer):
             return None
 
 
-class ServerSerializer(PaginatedSerializerMixin, DynamicFieldsModelSerializer):
+class ServerSerializer(PaginationMixin, DynamicFieldsModelSerializer):
     target = serializers.SerializerMethodField('get_deployment_target')
 
     class Meta:
         model = Server
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(ServerSerializer, self).__init__(*args, **kwargs)
@@ -61,7 +62,7 @@ class ServerSerializer(PaginatedSerializerMixin, DynamicFieldsModelSerializer):
             return None
 
 
-class GroupSerializer(PaginatedSerializerMixin,
+class GroupSerializer(PaginationMixin,
                       DynamicFieldsModelSerializer):
     servers = ServerSerializer(read_only=True, many=True,
                                fields=('hostname', 'ip_address', 'idc'))
@@ -71,10 +72,12 @@ class GroupSerializer(PaginatedSerializerMixin,
     rollbackable = serializers.SerializerMethodField('is_rollbackable')
     last_success_package = serializers.SerializerMethodField()
     braked = serializers.SerializerMethodField('is_braked')
-    forts = serializers.ListField(child=serializers.CharField(max_length=255), required=False)
+    forts = serializers.ListField(child=serializers.CharField(max_length=255),
+                                  required=False)
 
     class Meta:
         model = Group
+        fields = '__all__'
         ignored_fields = ('packages',)
 
     def __init__(self, *args, **kwargs):
@@ -83,7 +86,7 @@ class GroupSerializer(PaginatedSerializerMixin,
         self._rop_id = None
         request = self.context.get('request')
         if request is not None:
-            rop_id = request.QUERY_PARAMS.get('rop')
+            rop_id = request.query_params.get('rop')
             if rop_id is not None:
                 self._rop_id = str2int(rop_id)
 

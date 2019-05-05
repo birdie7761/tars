@@ -323,6 +323,7 @@ Class
                   break;
                 case "vm":
                 case "task":
+                  break;
                 default:
                   oh = config.vip.height + config.ld.height;
 
@@ -359,6 +360,7 @@ Class
                     break;
                   case "vm":
                   case "task":
+                    break;
                   default:
 
                     if (child.name == "working" || child.name == "maintain") {
@@ -432,6 +434,7 @@ Class
                     none = true;
                     break;
                   case "solid":
+                    break;
                   default:
                     paintStyle.dashstyle = "2 0";
                     paintStyle.lineWidth = 2;

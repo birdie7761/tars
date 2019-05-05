@@ -13,7 +13,7 @@ from tars.deployment.models import (
     TarsDeployment, TarsDeploymentConfig, TarsDeploymentBatch,
     TarsDeploymentTarget, TarsDeploymentAction)
 from tars.deployment import constants
-from .base import PaginatedSerializerMixin, DynamicFieldsModelSerializer
+from .base import PaginationMixin, DynamicFieldsModelSerializer
 from .server import GroupSerializer, ServerSerializer, PackageSerializer
 
 
@@ -21,6 +21,7 @@ class DeploymentConfigSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = TarsDeploymentConfig
+        fields = '__all__'
 
     def validate_batch_pattern(self, pattern_str):
         validator = self.Meta.model.deployment.related.model._meta\
@@ -31,7 +32,7 @@ class DeploymentConfigSerializer(DynamicFieldsModelSerializer):
             raise ValidationError(e)
 
 
-class DeploymentSerializer(PaginatedSerializerMixin,
+class DeploymentSerializer(PaginationMixin,
                            DynamicFieldsModelSerializer):
     """ for tarsui related API """
     config = DeploymentConfigSerializer(required=True)
@@ -322,7 +323,7 @@ class DeploymentSummarySerializer(serializers.BaseSerializer):
         return dict(id=obj.id, application=app.id, groups=[formatted_group])
 
 
-class DeploymentBatchSerializer(PaginatedSerializerMixin,
+class DeploymentBatchSerializer(PaginationMixin,
                                 DynamicFieldsModelSerializer):
     fort_batch = serializers.SerializerMethodField('is_fort_batch')
     summary = serializers.SerializerMethodField()
@@ -338,7 +339,7 @@ class DeploymentBatchSerializer(PaginatedSerializerMixin,
         return obj.summarize_targets()
 
 
-class DeploymentTargetSerializer(PaginatedSerializerMixin,
+class DeploymentTargetSerializer(PaginationMixin,
                                  DynamicFieldsModelSerializer):
     server = ServerSerializer(read_only=True)
     hostname = serializers.CharField()
